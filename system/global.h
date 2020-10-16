@@ -124,6 +124,8 @@ extern bool volatile warmup_done;
 extern bool volatile enable_thread_mem_pool;
 extern pthread_barrier_t warmup_bar;
 
+extern map<string, string> g_params;
+
 /******************************************/
 // Client Global Params 
 /******************************************/

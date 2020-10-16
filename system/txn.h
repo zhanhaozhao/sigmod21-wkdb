@@ -43,6 +43,10 @@ public:
 	row_t * 	data;
 	row_t * 	orig_data;
 	void cleanup();
+#if CC_ALG == SILO
+	ts_t 		tid;
+	// ts_t 		epoch;
+#endif
 };
 
 class Transaction {
@@ -172,6 +176,16 @@ public:
     // [HSTORE, HSTORE_SPEC]
     int volatile    ready_part;
     int volatile    ready_ulk;
+#if CC_ALG == SILO
+	ts_t 			last_tid;
+    ts_t            max_tid;
+    uint64_t        num_locks;
+    // int*            write_set;
+    int             write_set[100];
+    int*            read_set;
+    RC              find_tid_silo(ts_t max_tid);
+    RC              finish(RC rc);
+#endif
     bool aborted;
     uint64_t return_id;
     RC        validate();
@@ -256,6 +270,14 @@ protected:
     access_t last_type;
 
     sem_t rsp_mutex;
+
+#if CC_ALG == SILO
+	bool 			_pre_abort;
+	bool 			_validation_no_wait;
+	ts_t 			_cur_tid;
+	RC				validate_silo();
+#endif
+
 };
 
 #endif

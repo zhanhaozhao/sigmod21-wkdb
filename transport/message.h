@@ -103,7 +103,7 @@ public:
   //uint64_t txn_id;
   //uint64_t batch_id;
   bool readonly;
-#if CC_ALG == MAAT || CC_ALG == WOOKONG
+#if CC_ALG == MAAT || CC_ALG == WOOKONG || CC_ALG == SILO
   uint64_t commit_timestamp;
 #endif
 
@@ -178,7 +178,9 @@ public:
   uint64_t lower;
   uint64_t upper;
 #endif
-
+#if CC_ALG == SILO
+  uint64_t max_tid;
+#endif
 
   // For Calvin PPS: part keys from secondary lookup for sequencer response
   Array<uint64_t> part_keys;

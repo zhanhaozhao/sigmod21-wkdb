@@ -71,6 +71,9 @@
 #define ATOM_SUB_FETCH(dest, value) \
 	__sync_sub_and_fetch(&(dest), value)
 
+#define COMPILER_BARRIER asm volatile("" ::: "memory");
+#define PAUSE_SILO { __asm__ ( "pause;" ); }
+
 /************************************************/
 // ASSERT Helper
 /************************************************/

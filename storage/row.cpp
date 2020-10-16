@@ -25,6 +25,7 @@
 #include "row_occ.h"
 #include "row_maat.h"
 #include "row_wkdb.h"
+#include "row_silo.h"
 #include "mem_alloc.h"
 #include "manager.h"
 
@@ -69,6 +70,8 @@ void row_t::init_manager(row_t * row) {
     manager = (Row_maat *) mem_allocator.align_alloc(sizeof(Row_maat));
 #elif CC_ALG == WOOKONG 
     manager = (Row_wkdb *) mem_allocator.align_alloc(sizeof(Row_wkdb));
+#elif CC_ALG == SILO 
+    manager = (Row_silo *) mem_allocator.align_alloc(sizeof(Row_silo));
 #endif
 
 #if CC_ALG != HSTORE && CC_ALG != HSTORE_SPEC 
@@ -336,6 +339,15 @@ RC row_t::get_row(access_t type, TxnManager * txn, row_t *& row) {
 	  goto end;
   }
 #endif
+#elif CC_ALG == SILO
+	// like OCC, tictoc also makes a local copy for each read/write
+ 	DEBUG_M("row_t::get_row SILO alloc \n");
+	row = (row_t *) mem_allocator.alloc(sizeof(row_t));
+	row->init(get_table(), get_part_id());
+	TsType ts_type = (type == RD)? R_REQ : P_REQ; 
+	rc = this->manager->access(txn, ts_type, row);
+	goto end;
+#elif CC_ALG == HSTORE
 	row = this;
 	goto end;
 #else
@@ -465,6 +477,12 @@ void row_t::return_row(RC rc, access_t type, TxnManager * txn, row_t * row) {
 	if (ROLL_BACK && type == XP) {// recover from previous writes.
 		this->copy(row);
 	}
+	return;
+#elif CC_ALG == SILO
+	assert (row != NULL);
+	row->free_row();
+    DEBUG_M("row_t::return_row XP free \n");
+	mem_allocator.free(row, sizeof(row_t));
 	return;
 #else 
 	assert(false);

@@ -39,7 +39,15 @@ public:
 	
 	TxnManager * 		get_txn_man(int thd_id) { return _all_txns[thd_id]; };
 	void 			set_txn_man(TxnManager * txn);
+
+	// For SILO
+	uint64_t 		get_epoch() { return *_epoch; };
+	void 	 		update_epoch();
 private:
+	// For SILO
+	volatile uint64_t * _epoch;		
+	ts_t * 			_last_epoch_update_time;
+
 	pthread_mutex_t ts_mutex;
 	uint64_t 		timestamp;
 	pthread_mutex_t mutexes[BUCKET_CNT];

@@ -54,6 +54,7 @@ class Row_occ;
 class Row_maat;
 class Row_specex;
 class Row_wkdb;
+class Row_silo;
 
 class row_t
 {
@@ -121,6 +122,8 @@ public:
     Row_wkdb * manager;
   #elif CC_ALG == HSTORE_SPEC
   	Row_specex * manager;
+  #elif CC_ALG == SILO
+  	Row_silo * manager;
   #elif CC_ALG == AVOID
     Row_avoid * manager;
   #endif
