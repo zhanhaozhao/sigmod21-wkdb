@@ -146,8 +146,19 @@ void WorkerThread::commit() {
   assert(IS_LOCAL(txn_man->get_txn_id()));
 
   uint64_t timespan = get_sys_clock() - txn_man->txn_stats.starttime;
-  DEBUG("COMMIT %ld %f -- %f\n",txn_man->get_txn_id(),simulation->seconds_from_start(get_sys_clock()),(double)timespan/ BILLION);
-
+  DEBUG("COMMIT %ld %f -- %f\n", txn_man->get_txn_id(),
+        simulation->seconds_from_start(get_sys_clock()), (double)timespan / BILLION);
+  
+  // ! trans total time
+  uint64_t end_time = get_sys_clock();
+  uint64_t timespan_short  = end_time - txn_man->txn_stats.restart_starttime;
+  uint64_t two_pc_timespan  = end_time - txn_man->txn_stats.prepare_start_time;
+  uint64_t finish_timespan  = end_time - txn_man->txn_stats.finish_start_time;
+  INC_STATS(get_thd_id(), trans_2pc_time, two_pc_timespan);
+  INC_STATS(get_thd_id(), trans_finish_time, finish_timespan);
+  INC_STATS(get_thd_id(), trans_commit_time, finish_timespan);
+  INC_STATS(get_thd_id(), trans_total_run_time, timespan_short);
+	
   // Send result back to client
 #if !SERVER_GENERATE_QUERIES
   msg_queue.enqueue(get_thd_id(),Message::create_message(txn_man,CL_RSP),txn_man->client_id);
@@ -166,7 +177,16 @@ void WorkerThread::abort() {
   ++txn_man->abort_cnt;
   txn_man->reset();
 
-  uint64_t penalty = abort_queue.enqueue(get_thd_id(), txn_man->get_txn_id(),txn_man->get_abort_cnt());
+  uint64_t end_time = get_sys_clock();
+  uint64_t timespan_short  = end_time - txn_man->txn_stats.restart_starttime;
+  uint64_t two_pc_timespan  = end_time - txn_man->txn_stats.prepare_start_time;
+  uint64_t finish_timespan  = end_time - txn_man->txn_stats.finish_start_time;
+  INC_STATS(get_thd_id(), trans_2pc_time, two_pc_timespan);
+  INC_STATS(get_thd_id(), trans_finish_time, finish_timespan);
+  INC_STATS(get_thd_id(), trans_abort_time, finish_timespan);
+  INC_STATS(get_thd_id(), trans_total_run_time, timespan_short);
+  uint64_t penalty =
+      abort_queue.enqueue(get_thd_id(), txn_man->get_txn_id(), txn_man->get_abort_cnt());
 
   txn_man->txn_stats.total_abort_time += penalty;
 
@@ -349,6 +369,8 @@ RC WorkerThread::process_rack_prep(Message * msg) {
   if(txn_man->get_rc() == RCOK) {
     rc  = txn_man->validate();
   }
+  uint64_t finish_start_time = get_sys_clock();
+  txn_man->txn_stats.finish_start_time = finish_start_time;
   if(rc == Abort || txn_man->get_rc() == Abort) {
     txn_man->txn->rc = Abort;
     rc = Abort;

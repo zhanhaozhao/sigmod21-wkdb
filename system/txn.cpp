@@ -454,7 +454,7 @@ RC TxnManager::commit() {
 #if CC_ALG == WOOKONG
   wkdb_time_table.release(get_thd_id(),get_txn_id());
 #endif
-  commit_stats();
+	commit_stats();
 #if LOGGING
     LogRecord * record = logger.createRecord(get_txn_id(),L_NOTIFY,0,0);
     if(g_repl_cnt > 0) {
@@ -463,7 +463,7 @@ RC TxnManager::commit() {
   logger.enqueueRecord(record);
   return WAIT;
 #endif
-  return Commit;
+	return Commit;
 }
 
 RC TxnManager::abort() {
@@ -513,17 +513,27 @@ RC TxnManager::abort() {
 }
 
 RC TxnManager::start_abort() {
-  txn->rc = Abort;
-  DEBUG("%ld start_abort\n",get_txn_id());
-  if(query->partitions_touched.size() > 1) {
-    send_finish_messages();
-    abort();
-    return Abort;
-  } 
-  return abort();
+	// ! trans process time
+	uint64_t prepare_start_time = get_sys_clock();
+	txn_stats.prepare_start_time = prepare_start_time;
+	uint64_t process_time_span  = prepare_start_time - txn_stats.restart_starttime;
+	INC_STATS(get_thd_id(), trans_process_time, process_time_span);
+	txn->rc = Abort;
+	DEBUG("%ld start_abort\n",get_txn_id());
+	if(query->partitions_touched.size() > 1) {
+		send_finish_messages();
+		abort();
+		return Abort;
+	} 
+	return abort();
 }
 
 RC TxnManager::start_commit() {
+	// ! trans process time
+	uint64_t prepare_start_time = get_sys_clock();
+	txn_stats.prepare_start_time = prepare_start_time;
+	uint64_t process_time_span  = prepare_start_time - txn_stats.restart_starttime;
+	INC_STATS(get_thd_id(), trans_process_time, process_time_span);
   RC rc = RCOK;
   DEBUG("%ld start_commit RO?%d multi-part?%d \n",get_txn_id(),query->readonly(),is_multi_part());
   if(is_multi_part()) {
@@ -532,12 +542,16 @@ RC TxnManager::start_commit() {
       send_prepare_messages();
       rc = WAIT_REM;
     } else {
+      uint64_t finish_start_time = get_sys_clock();
+			txn_stats.finish_start_time = finish_start_time;
       send_finish_messages();
       rsp_cnt = 0;
       rc = commit();
     }
   } else { // is not multi-part
     rc = validate();
+    uint64_t finish_start_time = get_sys_clock();
+		txn_stats.finish_start_time = finish_start_time;
     if(rc == RCOK)
       rc = commit();
     else

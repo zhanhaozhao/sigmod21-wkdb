@@ -75,46 +75,50 @@ public:
 
 class TxnStats {
 public:
-    void init();
-    void clear_short();
-    void reset();
-    void abort_stats(uint64_t thd_id);
-    void commit_stats(uint64_t thd_id, uint64_t txn_id, uint64_t batch_id, uint64_t timespan_long, uint64_t timespan_short);
-    uint64_t starttime;
-    uint64_t restart_starttime;
-    uint64_t wait_starttime;
-    uint64_t write_cnt;
-    uint64_t abort_cnt;
-    double total_process_time;
-    double process_time;
-    double total_local_wait_time;
-    double local_wait_time;
-    double total_remote_wait_time; // time waiting for a remote response, to help calculate network time
-    double remote_wait_time;
-    double total_twopc_time;
-    double twopc_time;
-    double total_abort_time; // time spent in aborted query land
-    double total_msg_queue_time; // time spent on outgoing queue
-    double msg_queue_time;
-    double total_work_queue_time; // time spent on work queue
-    double work_queue_time;
-    double total_cc_block_time; // time spent blocking on a cc resource
-    double cc_block_time;
-    double total_cc_time; // time spent actively doing cc
-    double cc_time;
-    uint64_t total_work_queue_cnt;
-    uint64_t work_queue_cnt;
+	void init();
+	void clear_short();
+	void reset();
+	void abort_stats(uint64_t thd_id);
+	void commit_stats(uint64_t thd_id, uint64_t txn_id, uint64_t batch_id, uint64_t timespan_long,
+										uint64_t timespan_short);
+	uint64_t starttime;
+	uint64_t restart_starttime;
+	uint64_t wait_starttime;
+	uint64_t write_cnt;
+	uint64_t abort_cnt;
+	uint64_t prepare_start_time;
+	uint64_t finish_start_time;
+	double total_process_time;
+	double process_time;
+	double total_local_wait_time;
+	double local_wait_time;
+	double total_remote_wait_time;  // time waiting for a remote response, to help calculate network
+																	// time
+	double remote_wait_time;
+	double total_twopc_time;
+	double twopc_time;
+	double total_abort_time; // time spent in aborted query land
+	double total_msg_queue_time; // time spent on outgoing queue
+	double msg_queue_time;
+	double total_work_queue_time; // time spent on work queue
+	double work_queue_time;
+	double total_cc_block_time; // time spent blocking on a cc resource
+	double cc_block_time;
+	double total_cc_time; // time spent actively doing cc
+	double cc_time;
+	uint64_t total_work_queue_cnt;
+	uint64_t work_queue_cnt;
 
-    // short stats
-    double work_queue_time_short;
-    double cc_block_time_short;
-    double cc_time_short;
-    double msg_queue_time_short;
-    double process_time_short;
-    double network_time_short;
+	// short stats
+	double work_queue_time_short;
+	double cc_block_time_short;
+	double cc_time_short;
+	double msg_queue_time_short;
+	double process_time_short;
+	double network_time_short;
 
-    double lat_network_time_start;
-    double lat_other_time_start;
+	double lat_network_time_start;
+	double lat_other_time_start;
 };
 
 /*
