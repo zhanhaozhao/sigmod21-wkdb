@@ -520,6 +520,10 @@ RC TxnManager::start_abort() {
 	INC_STATS(get_thd_id(), trans_process_time, process_time_span);
 	txn->rc = Abort;
 	DEBUG("%ld start_abort\n",get_txn_id());
+  uint64_t finish_start_time = get_sys_clock();
+  txn_stats.finish_start_time = finish_start_time;
+  uint64_t prepare_timespan  = finish_start_time - txn_stats.prepare_start_time;
+  INC_STATS(get_thd_id(), trans_prepare_time, prepare_timespan);
 	if(query->partitions_touched.size() > 1) {
 		send_finish_messages();
 		abort();
@@ -544,6 +548,8 @@ RC TxnManager::start_commit() {
     } else {
       uint64_t finish_start_time = get_sys_clock();
 			txn_stats.finish_start_time = finish_start_time;
+      uint64_t prepare_timespan  = finish_start_time - txn_stats.prepare_start_time;
+      INC_STATS(get_thd_id(), trans_prepare_time, prepare_timespan);
       send_finish_messages();
       rsp_cnt = 0;
       rc = commit();
@@ -552,6 +558,8 @@ RC TxnManager::start_commit() {
     rc = validate();
     uint64_t finish_start_time = get_sys_clock();
 		txn_stats.finish_start_time = finish_start_time;
+    uint64_t prepare_timespan  = finish_start_time - txn_stats.prepare_start_time;
+    INC_STATS(get_thd_id(), trans_prepare_time, prepare_timespan);
     if(rc == RCOK)
       rc = commit();
     else
@@ -784,7 +792,7 @@ void TxnManager::cleanup_row(RC rc, uint64_t rid) {
 #endif
 
 #if CC_ALG != SILO
-  accesses[rid]->data = NULL;
+  txn->accesses[rid]->data = NULL;
 #endif
 }
 
@@ -1011,6 +1019,7 @@ RC TxnManager::validate() {
       rc = wkdb_man.find_bound(this);
     }
   }
+#if CC_ALG == SILO
   if(CC_ALG == SILO && rc == RCOK) {
     rc = validate_silo();
     if(IS_LOCAL(get_txn_id()) && rc == RCOK) {
@@ -1019,8 +1028,10 @@ RC TxnManager::validate() {
       DEBUG("Validate success: %ld, cts: %ld \n", get_txn_id(), commit_timestamp);
     }
   }
+#endif
 
   INC_STATS(get_thd_id(),txn_validate_time,get_sys_clock() - starttime);
+  INC_STATS(get_thd_id(),trans_validate_time,get_sys_clock() - starttime);
   return rc;
 }
 
