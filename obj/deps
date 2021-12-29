@@ -166,12 +166,6 @@ obj/client_txn.o: client/client_txn.cpp client/client_txn.h system/global.h \
  statistics/stats_array.h system/pool.h system/global.h system/helper.h \
  system/concurrentqueue.h system/txn_table.h system/logger.h \
  system/sim_manager.h benchmarks/da_block_queue.h system/mem_alloc.h
-obj/adaptor.o: concurrency_control/adaptor.cpp concurrency_control/adaptor.h \
- storage/row.h system/global.h config.h statistics/stats.h \
- statistics/../system/global.h statistics/stats_array.h system/pool.h \
- system/global.h system/helper.h system/concurrentqueue.h \
- system/txn_table.h system/logger.h system/sim_manager.h \
- benchmarks/da_block_queue.h
 obj/bocc.o: concurrency_control/bocc.cpp system/global.h config.h \
  statistics/stats.h statistics/../system/global.h \
  statistics/stats_array.h system/pool.h system/global.h system/helper.h \
@@ -360,8 +354,7 @@ obj/row_wkdb.o: concurrency_control/row_wkdb.cpp storage/row.h \
  benchmarks/da_block_queue.h system/txn.h system/array.h \
  system/mem_alloc.h transport/message.h system/helper.h system/logger.h \
  system/array.h storage/table.h concurrency_control/row_wkdb.h \
- system/mem_alloc.h system/manager.h concurrency_control/wkdb.h \
- concurrency_control/adaptor.h storage/row.h
+ system/mem_alloc.h system/manager.h concurrency_control/wkdb.h
 obj/row_wsi.o: concurrency_control/row_wsi.cpp system/txn.h system/global.h \
  config.h statistics/stats.h statistics/../system/global.h \
  statistics/stats_array.h system/pool.h system/helper.h \
@@ -410,8 +403,7 @@ obj/wkdb.o: concurrency_control/wkdb.cpp system/global.h config.h \
  system/sim_manager.h benchmarks/da_block_queue.h system/helper.h \
  system/txn.h system/array.h system/mem_alloc.h transport/message.h \
  system/logger.h system/array.h storage/row.h concurrency_control/wkdb.h \
- concurrency_control/adaptor.h storage/row.h system/manager.h \
- system/mem_alloc.h concurrency_control/row_wkdb.h
+ system/manager.h system/mem_alloc.h concurrency_control/row_wkdb.h
 obj/wsi.o: concurrency_control/wsi.cpp system/global.h config.h \
  statistics/stats.h statistics/../system/global.h \
  statistics/stats_array.h system/pool.h system/global.h system/helper.h \
@@ -472,8 +464,7 @@ obj/message.o: transport/message.cpp system/mem_alloc.h system/global.h \
  transport/message.h concurrency_control/maat.h concurrency_control/dta.h \
  concurrency_control/../storage/row.h benchmarks/da.h \
  benchmarks/creator.h benchmarks/generic.h benchmarks/da_query.h \
- benchmarks/da.h concurrency_control/wkdb.h concurrency_control/adaptor.h \
- storage/row.h concurrency_control/tictoc.h
+ benchmarks/da.h concurrency_control/wkdb.h concurrency_control/tictoc.h
 obj/msg_thread.o: transport/msg_thread.cpp transport/msg_thread.h \
  system/global.h config.h statistics/stats.h \
  statistics/../system/global.h statistics/stats_array.h system/pool.h \
@@ -543,9 +534,8 @@ obj/global.o: system/global.cpp system/global.h config.h statistics/stats.h \
  concurrency_control/maat.h system/msg_queue.h system/lock_free_queue.h \
  system/sequencer.h concurrency_control/dli.h concurrency_control/dta.h \
  concurrency_control/../storage/row.h concurrency_control/wkdb.h \
- concurrency_control/adaptor.h storage/row.h concurrency_control/tictoc.h \
- system/key_xid.h system/spin_lock.h system/hash.h system/rts_cache.h \
- concurrency_control/adaptor.h
+ concurrency_control/tictoc.h system/key_xid.h system/spin_lock.h \
+ system/hash.h system/rts_cache.h
 obj/hash.o: system/hash.cpp system/hash.h
 obj/helper.o: system/helper.cpp system/global.h config.h statistics/stats.h \
  statistics/../system/global.h statistics/stats_array.h system/pool.h \
@@ -611,8 +601,7 @@ obj/main.o: system/main.cpp system/abort_thread.h system/global.h config.h \
  benchmarks/ycsb_query.h benchmarks/da.h benchmarks/creator.h \
  benchmarks/generic.h concurrency_control/ssi.h concurrency_control/wsi.h \
  concurrency_control/focc.h concurrency_control/bocc.h \
- concurrency_control/wkdb.h concurrency_control/adaptor.h storage/row.h \
- concurrency_control/tictoc.h
+ concurrency_control/wkdb.h concurrency_control/tictoc.h
 obj/manager.o: system/manager.cpp system/global.h config.h statistics/stats.h \
  statistics/../system/global.h statistics/stats_array.h system/pool.h \
  system/helper.h system/concurrentqueue.h system/txn_table.h \
@@ -710,9 +699,8 @@ obj/txn.o: system/txn.cpp system/helper.h system/global.h config.h \
  system/manager.h transport/message.h system/msg_queue.h \
  system/lock_free_queue.h benchmarks/ycsb_query.h system/query.h \
  benchmarks/tpcc_query.h benchmarks/pps_query.h \
- concurrency_control/wkdb.h concurrency_control/adaptor.h storage/row.h \
- concurrency_control/tictoc.h concurrency_control/ssi.h \
- concurrency_control/wsi.h
+ concurrency_control/wkdb.h concurrency_control/tictoc.h \
+ concurrency_control/ssi.h concurrency_control/wsi.h
 obj/txn_table.o: system/txn_table.cpp system/txn_table.h system/global.h \
  config.h statistics/stats.h statistics/../system/global.h \
  statistics/stats_array.h system/pool.h system/helper.h \
@@ -754,13 +742,9 @@ obj/worker_thread.o: system/worker_thread.cpp system/worker_thread.h \
  system/query.h system/array.h benchmarks/tpcc_query.h system/query.h \
  system/txn.h transport/message.h system/wl.h system/work_queue.h \
  benchmarks/ycsb_query.h concurrency_control/wkdb.h \
- concurrency_control/adaptor.h storage/row.h concurrency_control/tictoc.h \
- concurrency_control/wsi.h concurrency_control/ssi.h \
- concurrency_control/focc.h concurrency_control/bocc.h \
- transport/transport.h storage/index_hash.h storage/index_base.h \
- storage/index_btree.h benchmarks/ycsb.h system/wl.h system/txn.h \
- benchmarks/tpcc.h benchmarks/da.h benchmarks/creator.h \
- benchmarks/generic.h benchmarks/pps.h
+ concurrency_control/tictoc.h concurrency_control/wsi.h \
+ concurrency_control/ssi.h concurrency_control/focc.h \
+ concurrency_control/bocc.h
 obj/stats.o: statistics/stats.cpp statistics/stats.h \
  statistics/../system/global.h config.h statistics/stats.h \
  statistics/../system/pool.h statistics/../system/global.h \

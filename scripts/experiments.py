@@ -143,7 +143,7 @@ def ycsb_scaling_abort():
 
 def ycsb_skew():
     wl = 'YCSB'
-    nnodes = [2]
+    nnodes = [16]
     # algos=['WOOKONG','WAIT_DIE','MVCC','MAAT','TIMESTAMP','OCC']
     algos=['WOOKONG']
     # algos=['CALVIN']
@@ -152,8 +152,10 @@ def ycsb_skew():
     tup_write_perc = [0.5]
     load = [10000]
     tcnt = [4]
-    skew = [0.0,0.25,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.9]
-    # skew = [0.25]
+    # skew = [0.0,0.25,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.9]
+    # skew = [0.5]
+    # skew = [0.0,0.25,0.5,0.6,0.7]
+    skew = [0.8]
     fmt = ["WORKLOAD","NODE_CNT","CC_ALG","SYNTH_TABLE_SIZE","TUP_WRITE_PERC","TXN_WRITE_PERC","MAX_TXN_IN_FLIGHT","ZIPF_THETA","THREAD_CNT"]
     exp = [[wl,n,algo,base_table_size*n,tup_wr_perc,txn_wr_perc,ld,sk,thr] for thr,txn_wr_perc,tup_wr_perc,ld,n,sk,algo in itertools.product(tcnt,txn_write_perc,tup_write_perc,load,nnodes,skew,algos)]
     return fmt,exp
@@ -832,13 +834,12 @@ configs = {
     "THREAD_CNT": 4,
     "REPLICA_CNT": 0,
     "REPLICA_TYPE": "AP",
-    "REM_THREAD_CNT": 2,
-    "SEND_THREAD_CNT": 2,
-    # "CLIENT_NODE_CNT" : "NODE_CNT",
-    "CLIENT_NODE_CNT" : 2,
+    "REM_THREAD_CNT": 1,
+    "SEND_THREAD_CNT": 1,
+    "CLIENT_NODE_CNT" : 16, #"NODE_CNT",
     "CLIENT_THREAD_CNT" : 4,
-    "CLIENT_REM_THREAD_CNT" : 2,
-    "CLIENT_SEND_THREAD_CNT" : 2,
+    "CLIENT_REM_THREAD_CNT" : 1,
+    "CLIENT_SEND_THREAD_CNT" : 1,
     "MAX_TXN_PER_PART" : 500000,
     "WORKLOAD" : "YCSB",
     "CC_ALG" : "WAIT_DIE",
@@ -850,8 +851,8 @@ configs = {
     "MAX_TXN_IN_FLIGHT": 10000,
     "NETWORK_DELAY": '0UL',
     "NETWORK_DELAY_TEST": 'false',
-    "DONE_TIMER": "1 * 60 * BILLION // ~1 minutes",
-    "WARMUP_TIMER": "1 * 60 * BILLION // ~1 minutes",
+    "DONE_TIMER": "1 * 30 * BILLION // ~1 minutes",
+    "WARMUP_TIMER": "1 * 30 * BILLION // ~1 minutes",
     "SEQ_BATCH_TIMER": "5 * 1 * MILLION // ~5ms -- same as CALVIN paper",
     "BATCH_TIMER" : "0",
     "PROG_TIMER" : "10 * BILLION // in s",

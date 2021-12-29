@@ -1,6 +1,8 @@
 CC=/usr/bin/g++
 CFLAGS=-Wall -Werror -std=c++11 -g3 -ggdb -O0 -fno-strict-aliasing -fno-omit-frame-pointer -D_GLIBCXX_USE_CXX11_ABI=0
 #CFLAGS += -fsanitize=address -fno-stack-protector -fno-omit-frame-pointer
+# CFLAGS=-Wall -std=c++1y -O3 -fno-strict-aliasing -D_GLIBCXX_USE_CXX11_ABI=0
+# -I/usr/local/include -L/usr/local/lib
 NNMSG=./nanomsg-0.5-beta
 
 .SUFFIXES: .o .cpp .h .cc
